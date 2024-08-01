@@ -33,7 +33,7 @@ export const Footer: React.FC = () => {
     [dispatch],
   );
 
-  function handleDeleteTodo(todoId: number) {
+  const handleDeleteTodo = (todoId: number) => {
     deleteTodo(todoId)
       .then(() => {
         dispatch(deleteTodoAction(todoId));
@@ -46,9 +46,9 @@ export const Footer: React.FC = () => {
       .catch(() => {
         handleError('Unable to delete a todo');
       });
-  }
+  };
 
-  function handleClearCompleted() {
+  const handleClearCompleted = () => {
     dispatch(setLoadingItemIdsAction(completedTodosIds));
 
     const deleteTodoPromises = completedTodosIds.map(todoId =>
@@ -65,7 +65,7 @@ export const Footer: React.FC = () => {
 
         dispatch(setLoadingItemIdsAction([]));
       });
-  }
+  };
 
   return (
     <footer className="todoapp__footer" data-cy="Footer">

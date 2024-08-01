@@ -11,10 +11,10 @@ export const ErrorNotification: React.FC = () => {
 
   const handleError = useErrorMessage();
 
-  function handleErrorMessageClose() {
+  const handleErrorMessageClose = () => {
     handleError('');
     dispatch(setInputFocuseAction(true));
-  }
+  };
 
   return (
     <div

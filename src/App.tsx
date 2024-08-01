@@ -16,7 +16,7 @@ import { setInputFocuseAction, setTodosAction } from './components/todoActions';
 
 export const App: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const { todos } = useContext(StateContext);
+  const { todos, tempTodo } = useContext(StateContext);
   const dispatch = useContext(DispatchContext);
   const handleError = useErrorMessage();
 
@@ -49,7 +49,7 @@ export const App: React.FC = () => {
 
         {isLoading && <Loader />}
 
-        {!!todos.length && (
+        {(!!todos.length || tempTodo) && (
           <>
             <TodoList />
             <Footer />

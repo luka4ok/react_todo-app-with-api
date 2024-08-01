@@ -22,6 +22,7 @@ export const Header: React.FC = () => {
   const [isFormSubmitted, setIsFormSubmitted] = useState(false);
 
   const focusField = useRef<HTMLInputElement>(null);
+
   const areAllTodosCompleted = useMemo(
     () => todos.every(todo => todo.completed),
     [todos],
@@ -43,7 +44,25 @@ export const Header: React.FC = () => {
     }
   }, [isInputFocused, dispatch]);
 
-  function onFormSubmit(event: React.FormEvent) {
+  const addTodo = async (newTodo: Omit<Todo, 'id'>) => {
+    setIsFormSubmitted(true);
+
+    try {
+      const todoFromServer = await postTodo(newTodo);
+
+      dispatch(setTodosAction([...todos, todoFromServer]));
+      setTodoTitle('');
+    } catch {
+      handleError('Unable to add a todo');
+    } finally {
+      dispatch(setTempTodoAction(null));
+      dispatch(setInputFocuseAction(true));
+      dispatch(setLoadingItemIdsAction([]));
+      setIsFormSubmitted(false);
+    }
+  };
+
+  const onFormSubmit = (event: React.FormEvent) => {
     event.preventDefault();
 
     if (!todoTitle.trim().length) {
@@ -59,39 +78,25 @@ export const Header: React.FC = () => {
       userId: USER_ID,
     };
 
-    setIsFormSubmitted(true);
-
-    postTodo(newTodo)
-      .then(todoFromServer => {
-        dispatch(setTodosAction([...todos, todoFromServer]));
-        setTodoTitle('');
-      })
-      .catch(() => {
-        handleError('Unable to add a todo');
-      })
-      .finally(() => {
-        dispatch(setTempTodoAction(null));
-        dispatch(setInputFocuseAction(true));
-        dispatch(setLoadingItemIdsAction([]));
-        setIsFormSubmitted(false);
-      });
-
-    const tempTodo = {
+    const newTempTodo = {
       ...newTodo,
       id: 0,
     };
 
-    dispatch(setTempTodoAction(tempTodo));
+    setIsFormSubmitted(true);
 
-    dispatch(setLoadingItemIdsAction([tempTodo.id]));
-  }
+    addTodo(newTodo);
 
-  function handleEscKeyUp(event: React.KeyboardEvent<HTMLInputElement>) {
+    dispatch(setLoadingItemIdsAction([0]));
+    dispatch(setTempTodoAction(newTempTodo));
+  };
+
+  const handleEscKeyUp = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Escape') {
       setTodoTitle('');
       dispatch(setInputFocuseAction(true));
     }
-  }
+  };
 
   const handleToggleTodoStatus = async (todo: Todo) => {
     try {
