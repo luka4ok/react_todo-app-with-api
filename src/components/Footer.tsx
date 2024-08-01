@@ -77,7 +77,7 @@ export const Footer: React.FC = () => {
 
       <nav className="filter" data-cy="Filter">
         <a
-          href="/#"
+          href="#/"
           className={cn('filter__link', {
             selected: filterStatus === FilterStatus.All,
           })}
